@@ -18,11 +18,15 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     coordinator: FirelabsCoordinator = hass.data[DOMAIN][entry.entry_id]
-    entities: list[SwitchEntity] = [
-        RelaySwitch(coordinator),
-        IdentifySwitch(coordinator),
-    ]
-    if coordinator.data.get("meter"):
+    data = coordinator.data
+    # Capability-driven: each entity is added only if the device reports it, so
+    # other FireLabs devices get the right entities without device-specific code.
+    entities: list[SwitchEntity] = []
+    if "relay" in data:
+        entities.append(RelaySwitch(coordinator))
+    if "identify" in data:
+        entities.append(IdentifySwitch(coordinator))
+    if data.get("meter") and "noload" in data:
         entities.append(NoLoadSwitch(coordinator))
     async_add_entities(entities)
 

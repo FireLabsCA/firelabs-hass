@@ -104,11 +104,13 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     coordinator: FirelabsCoordinator = hass.data[DOMAIN][entry.entry_id]
-    has_meter = bool(coordinator.data.get("meter"))
+    data = coordinator.data
+    has_meter = bool(data.get("meter"))
+    # Only add a sensor if it applies and the device actually reports its field.
     async_add_entities(
         FirelabsSensor(coordinator, desc)
         for desc in SENSORS
-        if has_meter or not desc.needs_meter
+        if (has_meter or not desc.needs_meter) and desc.value_fn(data) is not None
     )
 
 

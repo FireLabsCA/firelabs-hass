@@ -19,7 +19,8 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     coordinator: FirelabsCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([RestoreModeSelect(coordinator)])
+    if "restore" in coordinator.data:
+        async_add_entities([RestoreModeSelect(coordinator)])
 
 
 class RestoreModeSelect(FirelabsEntity, SelectEntity):
