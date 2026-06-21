@@ -1,4 +1,4 @@
-"""FireLabs button platform."""
+"""FireLabs text platform."""
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -11,4 +11,4 @@ from ._platform import add_entities_for
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    add_entities_for(hass, entry, async_add_entities, "buttons")
+    add_entities_for(hass, entry, async_add_entities, "texts")

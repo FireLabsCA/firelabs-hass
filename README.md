@@ -2,6 +2,9 @@
 
 A local Home Assistant integration for FireLabs devices. It talks to each device over its local HTTP API, so it needs no MQTT, no broker, and no cloud. Entities are built from what the device reports at `/api/status`, so this one integration covers the whole FireLabs line rather than a single model.
 
+[![Open your Home Assistant instance and open the FireLabs repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=FireLabsCA&repository=firelabs-hass&category=integration)
+[![Open your Home Assistant instance and start setting up FireLabs.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=firelabs)
+
 ## Supported devices
 
 | Device | Notes |
