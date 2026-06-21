@@ -4,7 +4,7 @@
     "step": {
       "user": {
         "title": "Add a FireLabs device",
-        "description": "Enter the IP address or hostname (for example fl-living-room.local) of your FireLabs plug.",
+        "description": "Enter the IP address or hostname (for example fl-living-room.local) of your FireLabs device.",
         "data": {
           "host": "Host"
         }
@@ -20,6 +20,34 @@
     "abort": {
       "already_configured": "This device is already set up.",
       "cannot_connect": "Could not reach the discovered device."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Weather Display",
+        "description": "Map Home Assistant entities to what the display shows, then set its power schedule. Paste this check-in URL into the device's web page:\n\n`{webhook_url}`",
+        "data": {
+          "ent_temp": "Temperature",
+          "ent_feels_like": "Feels like",
+          "ent_condition": "Condition",
+          "ent_humidity": "Humidity",
+          "ent_wind": "Wind",
+          "ent_gust": "Wind gust",
+          "ent_precip": "Precipitation",
+          "ent_uv": "UV index",
+          "ent_high": "Today's high",
+          "ent_low": "Today's low",
+          "ent_pop": "Chance of precipitation",
+          "ent_weather": "Weather entity (hourly forecast)",
+          "sleep_min": "Refresh interval",
+          "quiet_start": "Quiet hours start",
+          "quiet_end": "Quiet hours end"
+        }
+      }
+    },
+    "abort": {
+      "no_options": "This device has no options to configure."
     }
   }
 }
