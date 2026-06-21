@@ -17,6 +17,7 @@ PLATFORMS: list[Platform] = [
     Platform.LIGHT,
     Platform.NUMBER,
     Platform.TEXT,
+    Platform.UPDATE,
 ]
 
 
