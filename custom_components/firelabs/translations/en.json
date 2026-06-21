@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a FireLabs device",
+        "description": "Enter the IP address or hostname (for example fl-living-room.local) of your FireLabs plug.",
+        "data": {
+          "host": "Host"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the device at that address."
+    },
+    "abort": {
+      "already_configured": "This device is already set up."
+    }
+  }
+}
