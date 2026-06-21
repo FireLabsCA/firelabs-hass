@@ -10,7 +10,7 @@ A local Home Assistant integration for FireLabs smart plugs (Sonoff S31 running 
 ## Install (HACS)
 
 1. In HACS, open the three-dot menu and choose **Custom repositories**.
-2. Add `https://github.com/fireball1725/firelabs-hass` with category **Integration**.
+2. Add `https://github.com/FireLabsCA/firelabs-hass` with category **Integration**.
 3. Install **FireLabs**, then restart Home Assistant.
 4. Go to **Settings → Devices & Services → Add Integration**, search **FireLabs**, and enter the plug's IP address or `fl-<name>.local` hostname.
 
@@ -41,4 +41,4 @@ The firmware also supports MQTT Discovery. Use one or the other, not both, to av
 
 ## License
 
-MIT
+[GNU AGPL-3.0](LICENSE).
