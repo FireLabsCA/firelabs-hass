@@ -14,7 +14,7 @@ A local Home Assistant integration for FireLabs smart plugs (Sonoff S31 running 
 3. Install **FireLabs**, then restart Home Assistant.
 4. Go to **Settings → Devices & Services → Add Integration**, search **FireLabs**, and enter the plug's IP address or `fl-<name>.local` hostname.
 
-The plug is identified by its MAC, so its IP can change without breaking the device or its history.
+Plugs on your network are also found automatically: Home Assistant shows a "discovered" card and you just confirm, no address needed. The plug is identified by its MAC, so its IP can change without breaking the device or its history.
 
 ## Entities
 

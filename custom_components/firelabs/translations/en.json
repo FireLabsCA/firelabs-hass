@@ -1,5 +1,6 @@
 {
   "config": {
+    "flow_title": "{name}",
     "step": {
       "user": {
         "title": "Add a FireLabs device",
@@ -7,13 +8,18 @@
         "data": {
           "host": "Host"
         }
+      },
+      "zeroconf_confirm": {
+        "title": "FireLabs device found",
+        "description": "Do you want to set up {name}?"
       }
     },
     "error": {
       "cannot_connect": "Could not reach the device at that address."
     },
     "abort": {
-      "already_configured": "This device is already set up."
+      "already_configured": "This device is already set up.",
+      "cannot_connect": "Could not reach the discovered device."
     }
   }
 }

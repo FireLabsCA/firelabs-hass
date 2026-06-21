@@ -1,12 +1,13 @@
 {
   "domain": "firelabs",
   "name": "FireLabs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "config_flow": true,
   "documentation": "https://github.com/fireball1725/firelabs-hass",
   "issue_tracker": "https://github.com/fireball1725/firelabs-hass/issues",
   "codeowners": ["@fireball1725"],
   "iot_class": "local_polling",
   "integration_type": "device",
-  "requirements": []
+  "requirements": [],
+  "zeroconf": ["_firelabs._tcp.local."]
 }
