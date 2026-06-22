@@ -28,6 +28,7 @@
         "title": "Weather Display",
         "description": "Map Home Assistant entities to what the display shows, then set its power schedule. Paste this check-in URL into the device's web page:\n\n`{webhook_url}`",
         "data": {
+          "location": "Location label (blank uses your HA location name)",
           "ent_temp": "Temperature",
           "ent_feels_like": "Feels like",
           "ent_condition": "Condition",

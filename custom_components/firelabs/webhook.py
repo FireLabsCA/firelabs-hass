@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.util import dt as dt_util
 
 from .const import (
+    CONF_LOCATION,
     CONF_QUIET_END,
     CONF_QUIET_START,
     CONF_SLEEP_MIN,
@@ -92,7 +93,12 @@ async def _build_bundle(
     forecast = await _build_forecast(hass, opts.get(CONF_WEATHER_ENTITY))
 
     return {
+        "location": opts.get(CONF_LOCATION) or hass.config.location_name or "Weather",
         "updated": dt_util.now().isoformat(timespec="seconds"),
+        "units": {
+            "wind": _unit(hass, opts, WX_CURRENT_FIELDS["wind"], "km/h"),
+            "precip": _unit(hass, opts, WX_CURRENT_FIELDS["precip"], "mm"),
+        },
         "current": current,
         "forecast": forecast,
         "settings": {
@@ -103,6 +109,18 @@ async def _build_bundle(
         },
         "ota": {"version": "0.0.0", "url": ""},  # mass-OTA fields, filled later
     }
+
+
+def _unit(hass: HomeAssistant, opts: dict, opt_key: str, default: str) -> str:
+    """The source sensor's unit_of_measurement, so the panel matches HA."""
+    entity_id = opts.get(opt_key)
+    if entity_id:
+        state = hass.states.get(entity_id)
+        if state:
+            unit = state.attributes.get("unit_of_measurement")
+            if unit:
+                return unit
+    return default
 
 
 async def _build_forecast(hass: HomeAssistant, weather_entity: str | None) -> list:

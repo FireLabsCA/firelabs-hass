@@ -46,6 +46,7 @@ WX_CURRENT_FIELDS: dict[str, str] = {
 }
 CONF_WEATHER_ENTITY = "ent_weather"  # a weather.* entity drives the hourly strip
 WX_FORECAST_SLOTS = 5
+CONF_LOCATION = "location"  # header label; falls back to the HA location name
 
 CONF_SLEEP_MIN = "sleep_min"
 CONF_QUIET_START = "quiet_start"

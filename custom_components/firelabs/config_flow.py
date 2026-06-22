@@ -21,6 +21,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
 from .const import (
+    CONF_LOCATION,
     CONF_QUIET_END,
     CONF_QUIET_START,
     CONF_SLEEP_MIN,
@@ -159,6 +160,9 @@ def _wx_options_schema(opts: dict) -> vol.Schema:
         )
 
     fields: dict[Any, Any] = {}
+    fields[
+        vol.Optional(CONF_LOCATION, description={"suggested_value": opts.get(CONF_LOCATION)})
+    ] = selector.TextSelector()
     for field, key in WX_CURRENT_FIELDS.items():
         domains = ["sensor", "weather"] if field == "condition" else ["sensor"]
         fields[vol.Optional(key, description={"suggested_value": opts.get(key)})] = entity(domains)
