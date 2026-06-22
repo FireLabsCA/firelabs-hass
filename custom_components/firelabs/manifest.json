@@ -1,14 +1,20 @@
 {
   "domain": "firelabs",
   "name": "FireLabs",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "config_flow": true,
   "documentation": "https://github.com/FireLabsCA/firelabs-hass",
   "issue_tracker": "https://github.com/FireLabsCA/firelabs-hass/issues",
-  "codeowners": ["@fireball1725"],
-  "dependencies": ["webhook"],
+  "codeowners": [
+    "@fireball1725"
+  ],
+  "dependencies": [
+    "webhook"
+  ],
   "iot_class": "local_polling",
   "integration_type": "device",
   "requirements": [],
-  "zeroconf": ["_firelabs._tcp.local."]
+  "zeroconf": [
+    "_firelabs._tcp.local."
+  ]
 }
