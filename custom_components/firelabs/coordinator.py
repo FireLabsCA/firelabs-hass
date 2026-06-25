@@ -52,10 +52,8 @@ class FirelabsCoordinator(DataUpdateCoordinator[dict]):
         )
         self.host: str = entry.data["host"]
         self._session = async_get_clientsession(hass)
-        # WX only: the force-wake switch lives in HA and rides back in the bundle;
-        # webhook_id is stashed so the URL sensor can render the check-in URL.
+        # WX only: the force-wake switch lives in HA and rides back in the bundle.
         self.force_wake: bool = False
-        self.webhook_id: str | None = None
         # WX only: persist the last check-in so a restart restores telemetry instead
         # of going unavailable until the sleepy device next wakes. Wired devices poll
         # on startup, so they need no store.

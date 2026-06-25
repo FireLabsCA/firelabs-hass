@@ -2,9 +2,9 @@
 
 A sleepy, battery e-paper device. HA does not poll it; it wakes, checks in over
 the webhook, and reads back a weather bundle. So this module exposes telemetry
-the device reports on each check-in (battery, voltage, wake reason, last seen),
-the webhook URL to configure it with, and a force-wake switch. The weather data
-mapping itself lives in the config entry options, not here.
+the device reports on each check-in (battery, voltage, wake reason, last seen)
+and a force-wake switch. The check-in URL to configure the device with is shown
+in the config flow; the weather data mapping lives in the config entry options.
 """
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
 
-from homeassistant.components import webhook
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -91,26 +90,6 @@ class WxSensor(FirelabsEntity, SensorEntity):
         return self.entity_description.value_fn(self.coordinator.data)
 
 
-class WebhookUrlSensor(FirelabsEntity, SensorEntity):
-    """The check-in URL to paste into the device's web UI. Always available."""
-
-    _attr_name = "Webhook URL"
-    _attr_icon = "mdi:webhook"
-    _attr_entity_category = EntityCategory.DIAGNOSTIC
-
-    def __init__(self, coordinator: FirelabsCoordinator) -> None:
-        super().__init__(coordinator, "webhook_url")
-
-    @property
-    def native_value(self) -> str | None:
-        if not self.coordinator.webhook_id:
-            return None
-        # allow_external=False: the device is on the LAN and can't reach a cloud URL.
-        return webhook.async_generate_url(
-            self.hass, self.coordinator.webhook_id, allow_external=False
-        )
-
-
 # ---------- force-wake switch ----------
 
 class ForceWakeSwitch(FirelabsEntity, SwitchEntity):
@@ -139,7 +118,7 @@ class ForceWakeSwitch(FirelabsEntity, SwitchEntity):
 # ---------- per-platform builders ----------
 
 def sensors(coordinator: FirelabsCoordinator) -> list[SensorEntity]:
-    return [WxSensor(coordinator, d) for d in SENSORS] + [WebhookUrlSensor(coordinator)]
+    return [WxSensor(coordinator, d) for d in SENSORS]
 
 
 def switches(coordinator: FirelabsCoordinator) -> list[SwitchEntity]:
