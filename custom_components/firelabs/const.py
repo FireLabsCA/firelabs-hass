@@ -58,3 +58,10 @@ DEFAULT_QUIET_END = 6
 # A check-in is expected about every sleep_min (30 by default). Mark the device
 # unavailable after it misses roughly three cycles.
 WX_AVAILABLE_WINDOW = timedelta(minutes=95)
+
+# A sleepy device only reports on its check-in, so its telemetry must survive an HA
+# restart: persist the last check-in and restore it on startup instead of showing
+# everything as unavailable (and a false firmware update) until the device next wakes.
+WX_STORAGE_VERSION = 1
+WX_SNAPSHOT_KEYS = ("battery", "voltage", "fw", "wake", "last_seen")
+WX_SAVE_DELAY = 5  # seconds; debounce snapshot writes

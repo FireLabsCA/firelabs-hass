@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import aiohttp
 
@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -21,6 +22,9 @@ from .const import (
     HTTP_TIMEOUT,
     OTA_DOWNLOAD_TIMEOUT,
     OTA_UPLOAD_TIMEOUT,
+    WX_SAVE_DELAY,
+    WX_SNAPSHOT_KEYS,
+    WX_STORAGE_VERSION,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,10 +56,55 @@ class FirelabsCoordinator(DataUpdateCoordinator[dict]):
         # webhook_id is stashed so the URL sensor can render the check-in URL.
         self.force_wake: bool = False
         self.webhook_id: str | None = None
+        # WX only: persist the last check-in so a restart restores telemetry instead
+        # of going unavailable until the sleepy device next wakes. Wired devices poll
+        # on startup, so they need no store.
+        self._store: Store | None = (
+            None
+            if poll
+            else Store(hass, WX_STORAGE_VERSION, f"{DOMAIN}.wx.{entry.entry_id}")
+        )
 
     @property
     def base_url(self) -> str:
         return f"http://{self.host}"
+
+    async def async_restore_snapshot(self, seed: dict) -> dict:
+        """Merge the last persisted check-in into a sleepy device's startup seed.
+
+        Identity comes from the config entry; the telemetry (battery, voltage, fw,
+        wake reason, last-seen) is whatever the device last reported, so a restart
+        doesn't blank the sensors or flag a false firmware update before the next
+        check-in lands.
+        """
+        if self._store is None:
+            return seed
+        stored = await self._store.async_load()
+        if not stored:
+            return seed
+        restored = dict(seed)
+        for key in WX_SNAPSHOT_KEYS:
+            if stored.get(key) is not None:
+                restored[key] = stored[key]
+        # last_seen round-trips through JSON as an ISO string; the availability
+        # window and the timestamp sensor both need a real datetime back.
+        last = restored.get("last_seen")
+        if isinstance(last, str):
+            restored["last_seen"] = dt_util.parse_datetime(last)
+        return restored
+
+    def _save_snapshot(self, data: dict) -> None:
+        """Debounce-persist the telemetry fields of the latest check-in."""
+        if self._store is None:
+            return
+        snapshot: dict = {}
+        for key in WX_SNAPSHOT_KEYS:
+            value = data.get(key)
+            if isinstance(value, datetime):
+                value = value.isoformat()
+            if value is not None:
+                snapshot[key] = value
+        self._store.async_delay_save(lambda: snapshot, WX_SAVE_DELAY)
 
     async def _async_update_data(self) -> dict:
         try:
@@ -143,3 +192,4 @@ class FirelabsCoordinator(DataUpdateCoordinator[dict]):
         data["last_seen"] = dt_util.utcnow()
         self._reconcile_sw_version(data)
         self.async_set_updated_data(data)
+        self._save_snapshot(data)

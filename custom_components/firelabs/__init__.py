@@ -4,8 +4,9 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.storage import Store
 
-from .const import CONF_WEBHOOK_ID, DOMAIN, MODEL_WX
+from .const import CONF_WEBHOOK_ID, DOMAIN, MODEL_WX, WX_STORAGE_VERSION
 from .coordinator import FirelabsCoordinator
 from .webhook import async_register_webhook, async_unregister_webhook
 
@@ -45,6 +46,7 @@ async def _async_setup_wx(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = FirelabsCoordinator(hass, entry, poll=False)
     coordinator.webhook_id = entry.data.get(CONF_WEBHOOK_ID)
     seed = {k: entry.data[k] for k in _SEED_KEYS if entry.data.get(k) is not None}
+    seed = await coordinator.async_restore_snapshot(seed)
     coordinator.async_set_updated_data(seed)
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
@@ -66,3 +68,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _async_reload(hass: HomeAssistant, entry: ConfigEntry) -> None:
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Clean up the persisted WX snapshot when the device is removed.
+
+    The coordinator is already torn down by this point, so address the store by key.
+    """
+    if entry.data.get("model") == MODEL_WX:
+        await Store(
+            hass, WX_STORAGE_VERSION, f"{DOMAIN}.wx.{entry.entry_id}"
+        ).async_remove()
